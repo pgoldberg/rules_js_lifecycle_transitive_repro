@@ -1,0 +1,29 @@
+load("@aspect_rules_js//js:defs.bzl", "js_library", "js_test")
+load("@aspect_rules_js//npm:defs.bzl", "npm_link_package", "npm_package")
+load("@npm//:defs.bzl", "npm_link_all_packages")
+
+npm_link_all_packages()
+
+js_library(
+    name = "lib",
+    srcs = ["index.js"],
+    deps = [":node_modules/chalk"],
+)
+
+npm_package(
+    name = "lib_pkg",
+    srcs = [":lib"],
+    package = "lib",
+    version = "0.0.0",
+)
+
+npm_link_package(
+    name = "node_modules/lib",
+    src = ":lib_pkg",
+)
+
+js_test(
+    name = "test",
+    data = [":node_modules/lib"],
+    entry_point = "test.js",
+)
